@@ -9,7 +9,10 @@ public class CentralServer {
     private static final int MULTICAST_PORT = 9999;
 
     public static void main(String[] args) {
+        System.out.println("=== LectureLink Central Server ===");
         System.out.println("Server started on port " + TCP_PORT);
+        System.out.println("Multicast address: " + MULTICAST_ADDRESS + ":" + MULTICAST_PORT);
+        System.out.println("Waiting for connections...\n");
         try (ServerSocket serverSocket = new ServerSocket(TCP_PORT)) {
             while (true) {
                 Socket clientSocket = serverSocket.accept();

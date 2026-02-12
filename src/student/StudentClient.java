@@ -5,12 +5,19 @@ import java.net.*;
 import java.util.Scanner;
 
 public class StudentClient {
-    private static final String SERVER_ADDRESS = "localhost";
+    private static String SERVER_ADDRESS = "localhost";
     private static final int TCP_PORT = 8888;
     private static final String MULTICAST_ADDRESS = "230.0.0.1";
     private static final int MULTICAST_PORT = 9999;
 
     public static void main(String[] args) {
+        // Allow server address to be specified as command line argument
+        if (args.length > 0) {
+            SERVER_ADDRESS = args[0];
+        }
+        
+        System.out.println("Connecting to server at " + SERVER_ADDRESS + ":" + TCP_PORT);
+        
         // Start a thread to listen for UDP multicast announcements
         new Thread(StudentClient::listenForAnnouncements).start();
 
@@ -47,8 +54,11 @@ public class StudentClient {
     private static void listenForAnnouncements() {
         try (MulticastSocket socket = new MulticastSocket(MULTICAST_PORT)) {
             InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
-            socket.joinGroup(group);
+            InetSocketAddress groupAddress = new InetSocketAddress(group, MULTICAST_PORT);
+            NetworkInterface netIf = NetworkInterface.getByInetAddress(InetAddress.getLocalHost());
+            socket.joinGroup(groupAddress, netIf);
             System.out.println("Joined multicast group for announcements.");
+            System.out.println("Note: If you don't receive announcements, check your firewall settings.");
 
             byte[] buf = new byte[256];
             while (true) {

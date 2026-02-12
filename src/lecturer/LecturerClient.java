@@ -5,10 +5,17 @@ import java.net.*;
 import java.util.Scanner;
 
 public class LecturerClient {
-    private static final String SERVER_ADDRESS = "localhost";
+    private static String SERVER_ADDRESS = "localhost";
     private static final int TCP_PORT = 8888;
 
     public static void main(String[] args) {
+        // Allow server address to be specified as command line argument
+        if (args.length > 0) {
+            SERVER_ADDRESS = args[0];
+        }
+        
+        System.out.println("Connecting to server at " + SERVER_ADDRESS + ":" + TCP_PORT);
+        
         try (Socket socket = new Socket(SERVER_ADDRESS, TCP_PORT);
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
              BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
